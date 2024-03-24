@@ -8,5 +8,6 @@ import (
 func main() {
 	rootCmd := &cobra.Command{Use: "import"}
 	rootCmd.AddCommand(cli.BuildImportCommand())
+
 	rootCmd.Execute()
 }

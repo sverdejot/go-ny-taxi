@@ -3,9 +3,15 @@ package model
 import "time"
 
 type Trip struct {
-	Id, VendorId    string
-	Pickup, Dropoff time.Time
-	Passengers      int
-	Duration        int
+	Id         int       `json:"id"`
+	VendorId   int       `json:"vendor_id"`
+	Pickup     time.Time `json:"pickup_time"`
+	Dropoff    time.Time `json:"dropoff_time"`
+	Passengers int       `json:"passengers_count"`
+	Duration   int       `json:"duration"`
 }
 
+type TripRepository interface {
+	Find(id int) (Trip, bool)
+	Add(trip Trip) error
+}

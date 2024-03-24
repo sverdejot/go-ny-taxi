@@ -1,4 +1,4 @@
-package cli 
+package cli
 
 import (
 	"encoding/csv"
@@ -18,20 +18,20 @@ func parseTrip(fields []string) model.Trip {
 	dropoff, _ := time.Parse(time.DateTime, fields[3])
 	passengers, _ := strconv.Atoi(fields[4])
 	duration, _ := strconv.Atoi(fields[10])
+	id, _ := strconv.Atoi(fields[0][2:])
+	vendor_id, _ := strconv.Atoi(fields[1])
 
 	return model.Trip{
-		Id: fields[0],
-		VendorId: fields[1],
-		Pickup: pickup,
-		Dropoff: dropoff,
+		Id:         id,
+		VendorId:   vendor_id,
+		Pickup:     pickup,
+		Dropoff:    dropoff,
 		Passengers: passengers,
-		Duration: duration,
+		Duration:   duration,
 	}
 }
 
-var discard model.Trip
-
-func parseFile(fp string) {
+func parseFile(fp string) []model.Trip {
 	start := time.Now()
 	f, err := os.Open(fp)
 	defer f.Close()
@@ -45,6 +45,7 @@ func parseFile(fp string) {
 	_, _ = csvFile.Read()
 
 	var i int
+	trips := []model.Trip{}
 	for {
 		row, err := csvFile.Read()
 
@@ -54,9 +55,11 @@ func parseFile(fp string) {
 		if err != nil {
 			log.Fatalf(err.Error())
 		}
-		
-		discard = parseTrip(row)
+
+		trips = append(trips, parseTrip(row))
 		i++
 	}
+
 	fmt.Println("parsing complete. took: ", time.Since(start), " total: ", i)
+	return trips
 }

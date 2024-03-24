@@ -12,7 +12,7 @@ const (
 
 func BuildImportCommand() *cobra.Command {
 	impt := &cobra.Command{
-		Use: "import",
+		Use:   "import",
 		Short: "Import NY Taxis records from CSV file",
 
 		Run: func(cmd *cobra.Command, args []string) {
