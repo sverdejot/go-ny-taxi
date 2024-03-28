@@ -6,19 +6,20 @@ import (
 	"time"
 
 	"github.com/sverdejot/go-ny-taxi/internal/api/handler"
-	"github.com/sverdejot/go-ny-taxi/internal/storage"
+	"github.com/sverdejot/go-ny-taxi/internal/storage/postgres"
 )
 
 func Run() {
-	mux := http.NewServeMux()
-
-	repo := storage.NewInMemoryTripRepository()
+	db := storage.Initialize()
+	repo := storage.NewPostgresTripRepository(db)
 
 	handler := handler.TripHandler{
 		Repo: repo,
 	}
 
-	mux.Handle("GET /trip/{id}", handler.Get())
+	mux := http.NewServeMux()
+	mux.Handle("GET /trips/{id}", handler.Get())
+	mux.Handle("POST /trips", handler.Post())
 
 	srv := http.Server{
 		Addr:         ":8080",

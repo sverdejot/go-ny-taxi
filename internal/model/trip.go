@@ -5,9 +5,9 @@ import "time"
 type Trip struct {
 	Id         int       `json:"id"`
 	VendorId   int       `json:"vendor_id"`
-	Pickup     time.Time `json:"pickup_time"`
-	Dropoff    time.Time `json:"dropoff_time"`
-	Passengers int       `json:"passengers_count"`
+	Pickup     time.Time `json:"pickup"`
+	Dropoff    time.Time `json:"dropoff"`
+	Passengers int       `json:"passengers"`
 	Duration   int       `json:"duration"`
 }
 

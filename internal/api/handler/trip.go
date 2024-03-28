@@ -38,3 +38,24 @@ func (h *TripHandler) Get() http.Handler {
 		w.Write([]byte(resp))
 	})
 }
+
+func (h *TripHandler) Post() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var trip model.Trip
+		defer r.Body.Close()
+		decoder := json.NewDecoder(r.Body)
+
+		decoder.DisallowUnknownFields()
+		if err := decoder.Decode(&trip); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
+		if err := h.Repo.Add(trip); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+	})
+}
