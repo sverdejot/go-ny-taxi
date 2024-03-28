@@ -7,8 +7,8 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func Initialize() *sql.DB {
-	db, err := sql.Open("postgres", "postgres://user:pass@localhost/nytaxi?sslmode=disable")
+func Init(cs string) *sql.DB {
+	db, err := sql.Open("postgres", cs)
 
 	if err != nil {
 		log.Fatal(err)

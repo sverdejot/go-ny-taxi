@@ -1,7 +1,8 @@
 services:
   db:
     image: postgres:16
-    user: postgres
+    ports:
+      - 5432:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: pass
@@ -16,6 +17,12 @@ services:
     build: .
     ports:
       - 8080:8080
+    environment:
+      NYTAXI_DB_HOST: db
+      NYTAXI_DB_PORT: 5432
+      NYTAXI_DB_USER: user
+      NYTAXI_DB_PASS: pass
+      NYTAXI_DB_NAME: nytaxi
     depends_on:
       migrate:
         condition: service_completed_successfully

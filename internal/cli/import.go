@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/sverdejot/go-ny-taxi/internal/model"
+	"github.com/sverdejot/go-ny-taxi/internal/storage/postgres"
 )
 
 func parseTrip(fields []string) model.Trip {
@@ -28,6 +29,21 @@ func parseTrip(fields []string) model.Trip {
 		Dropoff:    dropoff,
 		Passengers: passengers,
 		Duration:   duration,
+	}
+}
+
+func imprt(cs string, fp string) {
+	trips := parseFile(fp)
+
+	db := storage.Initialize(cs)
+	defer db.Close()
+
+	repo := storage.NewPostgresTripRepository(db)
+
+	for _, t := range trips {
+		if err := repo.Add(t); err != nil {
+			log.Fatal(err)
+		}
 	}
 }
 
