@@ -1,9 +1,33 @@
 services:
   db:
     image: postgres:16
-    ports:
-      - 5432:5432
+    user: postgres
     environment:
-      POSTGRES_USER: user
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: nytaxi
+    healthcheck:
+      test: pg_isready
+      interval: 3s
+      timeout: 3s
+      retries: 5
+      start_period: 3s
+  app:
+    build: .
+    ports:
+      - 8080:8080
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  migrate:
+    image: migrate/migrate
+    volumes:
+      - ${PWD}/internal/storage/postgres/migrations:/migrations:ro
+    command:
+      - -path=/migrations
+      - -database=postgres://user:pass@db:5432/nytaxi?sslmode=disable
+      - up
+    depends_on:
+      db:
+        condition: service_healthy
