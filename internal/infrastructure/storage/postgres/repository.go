@@ -1,10 +1,10 @@
-package storage
+package postgres
 
 import (
 	"database/sql"
 	"log"
 
-	"github.com/sverdejot/go-ny-taxi/internal/model"
+	"github.com/sverdejot/go-ny-taxi/internal/domain"
 )
 
 var findQuery string = `SELECT * FROM trips WHERE id = $1;`
@@ -18,7 +18,7 @@ func NewPostgresTripRepository(db *sql.DB) *PostgresTripRepository {
 	return &PostgresTripRepository{db}
 }
 
-func (r *PostgresTripRepository) Find(id int) (trip model.Trip, found bool) {
+func (r *PostgresTripRepository) Find(id int) (trip domain.Trip, found bool) {
 	row := r.db.QueryRow(findQuery, id)
 
 	switch err := row.Scan(&trip.Id, &trip.VendorId, &trip.Pickup, &trip.Dropoff, &trip.Passengers, &trip.Duration); {
@@ -32,7 +32,7 @@ func (r *PostgresTripRepository) Find(id int) (trip model.Trip, found bool) {
 	}
 }
 
-func (r *PostgresTripRepository) Add(trip model.Trip) error {
+func (r *PostgresTripRepository) Add(trip domain.Trip) error {
 	_, err := r.db.Exec(insertQuery, trip.Id, trip.VendorId, trip.Pickup, trip.Dropoff, trip.Passengers, trip.Duration)
 
 	return err

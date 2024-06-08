@@ -9,11 +9,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/sverdejot/go-ny-taxi/internal/model"
-	"github.com/sverdejot/go-ny-taxi/internal/storage/postgres"
+	"github.com/sverdejot/go-ny-taxi/internal/domain"
+	"github.com/sverdejot/go-ny-taxi/internal/infrastructure/storage/postgres"
 )
 
-func parseTrip(fields []string) model.Trip {
+func parseTrip(fields []string) domain.Trip {
 	// eror handling, huh?
 	pickup, _ := time.Parse(time.DateTime, fields[2])
 	dropoff, _ := time.Parse(time.DateTime, fields[3])
@@ -22,7 +22,7 @@ func parseTrip(fields []string) model.Trip {
 	id, _ := strconv.Atoi(fields[0][2:])
 	vendor_id, _ := strconv.Atoi(fields[1])
 
-	return model.Trip{
+	return domain.Trip{
 		Id:         id,
 		VendorId:   vendor_id,
 		Pickup:     pickup,
@@ -35,10 +35,10 @@ func parseTrip(fields []string) model.Trip {
 func imprt(cs string, fp string) {
 	trips := parseFile(fp)
 
-	db := storage.Initialize(cs)
+	db := postgres.Init(cs)
 	defer db.Close()
 
-	repo := storage.NewPostgresTripRepository(db)
+	repo := postgres.NewPostgresTripRepository(db)
 
 	for _, t := range trips {
 		if err := repo.Add(t); err != nil {
@@ -47,7 +47,7 @@ func imprt(cs string, fp string) {
 	}
 }
 
-func parseFile(fp string) []model.Trip {
+func parseFile(fp string) []domain.Trip {
 	start := time.Now()
 	f, err := os.Open(fp)
 	defer f.Close()
@@ -61,7 +61,7 @@ func parseFile(fp string) []model.Trip {
 	_, _ = csvFile.Read()
 
 	var i int
-	trips := []model.Trip{}
+	trips := []domain.Trip{}
 	for {
 		row, err := csvFile.Read()
 

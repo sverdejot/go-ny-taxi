@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/spf13/cobra"
-	"github.com/sverdejot/go-ny-taxi/internal/storage/postgres"
+	"github.com/sverdejot/go-ny-taxi/internal/infrastructure/storage"
 )
 
 const (

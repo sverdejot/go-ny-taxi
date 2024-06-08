@@ -1,4 +1,4 @@
-package storage 
+package storage
 
 import (
 	"fmt"
@@ -68,6 +68,12 @@ func WithOpts(opts map[string]string) func(*ConnectionString) {
 	}
 }
 
-func (cs ConnectionString) String() string {
-	return fmt.Sprintf("%s://%s:%s@%s:%d/%s?%s", cs.Driver, cs.User, cs.Password, cs.Host, cs.Port, cs.Database, strings.Join(cs.Opts, "&"))
+func (cs ConnectionString) String() (cstr string) {
+	cstr = fmt.Sprintf("%s://%s:%s@%s:%d/%s", cs.Driver, cs.User, cs.Password, cs.Host, cs.Port, cs.Database)
+
+	if len(cs.Opts) > 0 {
+		cstr += "?" + strings.Join(cs.Opts, "&")
+	}
+
+	return cstr
 }
